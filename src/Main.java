@@ -1,4 +1,5 @@
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -10,16 +11,18 @@ public class Main {
     public static void saveGame(String path, GameProgress gameProgress) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path))) {
             oos.writeObject(gameProgress);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.getMessage();
         }
+
     }
+
 
     public static void zipFiles(String path, List<String> list) throws Exception {
         try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(path))) {
             for (String savePath : list) {
                 try (FileInputStream fis = new FileInputStream(savePath)) {
-                    ZipEntry entry = new ZipEntry(savePath);
+                    ZipEntry entry = new ZipEntry(new File(savePath).getName());
                     zout.putNextEntry(entry);
                     byte[] buffer = new byte[fis.available()];
                     fis.read(buffer);
@@ -55,5 +58,7 @@ public class Main {
         list.add("E:/Games/savegames/save3.dat");
 
         zipFiles("E:/Games/savegames/saveZip.zip", list);
+
+
     }
 }
